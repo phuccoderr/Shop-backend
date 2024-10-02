@@ -68,10 +68,10 @@ export class UserService {
   }
 
   async updateStatusUser(id: string, status: boolean) {
-    try {
-      return await this.repository.updateStatusUser(id, status);
-    } catch (error) {
+    const user = await this.repository.updateStatusUser(id, status);
+    if (!user) {
       throw new NotFoundException('Không tìm thấy user');
     }
+    return user;
   }
 }
