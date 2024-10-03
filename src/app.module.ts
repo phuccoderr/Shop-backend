@@ -3,8 +3,17 @@ import { Module } from '@nestjs/common';
 import { UserModule } from 'src/user/user.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { CategoryModule } from 'src/category/category.module';
+import { ProductModule } from 'src/product/product.module';
+import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
 
 @Module({
-  imports: [DatabaseModule, UserModule, AuthModule, CategoryModule],
+  imports: [
+    DatabaseModule,
+    UserModule,
+    AuthModule,
+    CategoryModule,
+    ProductModule,
+    CloudinaryModule,
+  ],
 })
 export class AppModule {}

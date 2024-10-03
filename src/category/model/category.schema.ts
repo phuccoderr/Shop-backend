@@ -12,8 +12,11 @@ export class Category {
   @Prop({ default: true })
   status: boolean;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'Category', required: false })
-  parent_id?: Category;
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Category', default: null })
+  parent_id?: Types.ObjectId;
+
+  @Prop({ type: [SchemaTypes.ObjectId], ref: 'Category', default: [] })
+  children?: Types.ObjectId[];
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);

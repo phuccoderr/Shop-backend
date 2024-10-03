@@ -18,27 +18,31 @@ import { UpdateCategoryDto } from 'src/category/dto/update-category.dto';
 export class CategoryController {
   constructor(private readonly service: CategoryService) {}
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() category: CreateCategoryDto) {
     return this.service.createCategory(category);
   }
 
+  // @UseGuards(JwtAuthGuard)
   @Get()
   getAll() {
     return this.service.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   getOne(@Param('id') id: string) {
     return this.service.findById(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   deleteOne(@Param('id') id: string) {
     return this.service.deleteById(id);
   }
 
+  // @UseGuards(JwtAuthGuard)
   @Put(':id')
   updateOne(@Param('id') id: string, @Body() category: UpdateCategoryDto) {
     return this.service.updateById(id, category);
