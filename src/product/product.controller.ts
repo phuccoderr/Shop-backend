@@ -84,10 +84,6 @@ export class ProductController {
     const product = await this.productService.deleteById(id);
 
     this.cloudinaryService.deleteImage(product.image_id);
-
-    // product.images.forEach(async (image) => {
-    //   await this.cloudinaryService.deleteImage(image.image_id);
-    // });
     const deleteImages = async (imgs) => {
       const deletePromises = imgs.map((image) =>
         this.cloudinaryService.deleteImage(image.image_id),
@@ -100,7 +96,6 @@ export class ProductController {
       }
     };
 
-    // Gọi hàm xóa hình ảnh
     await deleteImages(product.images);
 
     return 'Đã xóa product thành công';
