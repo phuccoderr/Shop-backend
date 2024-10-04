@@ -31,4 +31,13 @@
   - Delete: Xoá
 
 - Thư viện:
+
   - bcrypt: mã hoá mật khẩu
+
+- mã http:
+  - 200: thành công
+  - 400: lỗi đầu vào
+  - 401: cần đăng nhập
+  - 403: quyền truy cập
+  - 404: không tìm thấy
+  - 422: lỗi nhập cơ sở dữ liệu ví dụ (tên đã tồn tại, id không kiểu ObjectId ...)

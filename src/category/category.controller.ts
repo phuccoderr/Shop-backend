@@ -13,6 +13,9 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { CategoryService } from 'src/category/category.service';
 import { CreateCategoryDto } from 'src/category/dto/create-category.dto';
 import { UpdateCategoryDto } from 'src/category/dto/update-category.dto';
+import { Category } from 'src/category/model/category.schema';
+import { buildPagination } from 'src/common/common';
+import { ParamPaginationDto } from 'src/common/param-pagination.dto';
 
 @Controller('categories')
 export class CategoryController {
@@ -26,8 +29,14 @@ export class CategoryController {
 
   // @UseGuards(JwtAuthGuard)
   @Get()
-  getAll() {
-    return this.service.findAll();
+  async getAll(@Query() params: ParamPaginationDto) {
+    const categories = await this.service.findAll(params);
+
+    const rootCategories = categories.filter((category) => {
+      return category.parent_id === null;
+    });
+
+    return buildPagination<Category>(categories, params, rootCategories);
   }
 
   @UseGuards(JwtAuthGuard)

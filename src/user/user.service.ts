@@ -8,7 +8,7 @@ import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { User } from 'src/user/model/user.schema';
 import { UserRepository } from 'src/user/user.repository';
 import * as bcrypt from 'bcrypt';
-import { ParamPaginationDto } from 'src/user/dto/param-pagination.dto';
+import { ParamPaginationDto } from 'src/common/param-pagination.dto';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 
 @Injectable()
