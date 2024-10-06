@@ -29,6 +29,26 @@ export const buildPagination = <T>(
   };
 };
 
+export const checkMainFile = (file: Express.Multer.File) => {
+  const validImageExtensions = /\.(jpg|jpeg|png|)$/i;
+  const originName = file.originalname;
+  if (!validImageExtensions.test(originName)) {
+    throw new BadRequestException('Chọn file jpg,jpeg,png!');
+  }
+};
+
+export const checkExtraFiles = (files: Express.Multer.File[]) => {
+  const validImageExtensions = /\.(jpg|jpeg|png|)$/i;
+  if (files) {
+    files.forEach((file) => {
+      const originName = file.originalname;
+      if (!validImageExtensions.test(originName)) {
+        throw new BadRequestException('Chỉ nhận file jpg,jpeg,png!');
+      }
+    });
+  }
+};
+
 // Hàm kiểm tra file image
 export const checkFileImage = (files: {
   main_image: Express.Multer.File[];
@@ -36,7 +56,7 @@ export const checkFileImage = (files: {
 }) => {
   const validImageExtensions = /\.(jpg|jpeg|png|)$/i;
 
-  if (files.main_image.length > 0) {
+  if (files.main_image) {
     const originName = files.main_image[0].originalname;
 
     if (!validImageExtensions.test(originName)) {
@@ -44,7 +64,7 @@ export const checkFileImage = (files: {
     }
   }
 
-  if (files.extra_images?.length > 0) {
+  if (files.extra_images) {
     files.extra_images.forEach((file) => {
       const originName = file.originalname;
       if (!validImageExtensions.test(originName)) {

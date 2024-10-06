@@ -33,6 +33,15 @@ export class ProductRepository {
       .lean<Product>(true);
   }
 
+  async deleteExtraImages(id: Types.ObjectId, image_ids: string[]) {
+    return await this.model
+      .findOneAndUpdate(
+        { _id: id },
+        { $pull: { images: { image_id: { $in: image_ids } } } },
+      )
+      .lean<Product>(true);
+  }
+
   async findAll(
     page: number,
     limit: number,
@@ -50,5 +59,17 @@ export class ProductRepository {
 
   async deleteOne(id: string) {
     return await this.model.findOneAndDelete({ _id: id }).lean<Product>(true);
+  }
+
+  async updateOne(id: string, product: Product) {
+    return await this.model
+      .findOneAndUpdate({ _id: id }, product, {
+        new: true,
+      })
+      .lean<Product>(true);
+  }
+
+  async findOne(id: string) {
+    return await this.model.findOne({ _id: id }).lean<Product>(true);
   }
 }
