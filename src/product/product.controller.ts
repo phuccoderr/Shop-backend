@@ -11,6 +11,7 @@ import {
   Query,
   UploadedFile,
   UploadedFiles,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -28,6 +29,10 @@ import { ParamPaginationDto } from 'src/common/param-pagination.dto';
 import { CreateProductDto } from 'src/product/dto/create-product.dto';
 import { UpdateProductDto } from 'src/product/dto/update-product.dto';
 import { ProductService } from 'src/product/product.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { RoleAuthGuard } from 'src/auth/guards/role-jwt.guard';
+import { Roles } from 'src/auth/decorator/role.decorator';
+import { Role } from 'src/auth/decorator/role.enum';
 
 @Controller('products')
 export class ProductController {
@@ -36,6 +41,8 @@ export class ProductController {
     private readonly productService: ProductService,
   ) {}
 
+  @UseGuards(JwtAuthGuard, RoleAuthGuard)
+  @Roles(Role.ADMIN, Role.USER)
   @Post()
   @UseInterceptors(
     FileFieldsInterceptor([{ name: 'main_image' }, { name: 'extra_images' }]),
@@ -89,11 +96,15 @@ export class ProductController {
     return 'Đã tạo product thành công ';
   }
 
+  @UseGuards(JwtAuthGuard, RoleAuthGuard)
+  @Roles(Role.ADMIN, Role.USER)
   @Get()
   getAll(@Query() params: ParamPaginationDto) {
     return this.productService.findAll(params);
   }
 
+  @UseGuards(JwtAuthGuard, RoleAuthGuard)
+  @Roles(Role.ADMIN, Role.USER)
   @Delete(':id')
   async delete(@Param('id') id: string) {
     const product = await this.productService.deleteById(id);
@@ -103,11 +114,15 @@ export class ProductController {
     return 'Đã xóa product thành công';
   }
 
+  @UseGuards(JwtAuthGuard, RoleAuthGuard)
+  @Roles(Role.ADMIN, Role.USER)
   @Put(':id')
   update(@Param('id') id: string, @Body() product: UpdateProductDto) {
     return this.productService.updateById(id, product);
   }
 
+  @UseGuards(JwtAuthGuard, RoleAuthGuard)
+  @Roles(Role.ADMIN, Role.USER)
   @Put(':id/main_image')
   @UseInterceptors(FileInterceptor('main_image'))
   async updateImage(
@@ -139,11 +154,15 @@ export class ProductController {
     return newProduct;
   }
 
+  @UseGuards(JwtAuthGuard, RoleAuthGuard)
+  @Roles(Role.ADMIN, Role.USER)
   @Get(':id')
   getOne(@Param('id') id: string) {
     return this.productService.findById(id);
   }
 
+  @UseGuards(JwtAuthGuard, RoleAuthGuard)
+  @Roles(Role.ADMIN, Role.USER)
   @Put(':id/delete_images')
   async deleteImages(
     @Param('id') id: string,
@@ -156,6 +175,8 @@ export class ProductController {
     return 'Xoá ảnh phụ thành công!';
   }
 
+  @UseGuards(JwtAuthGuard, RoleAuthGuard)
+  @Roles(Role.ADMIN, Role.USER)
   @Put(':id/add_images')
   @UseInterceptors(FileFieldsInterceptor([{ name: 'extra_images' }]))
   async addImages(

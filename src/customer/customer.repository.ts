@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CreateCustomerDto } from 'src/customer/dto/create-customer.dto';
+import { UpdateCustomerDto } from 'src/customer/dto/update-customer.dto';
 import { Customer } from 'src/customer/model/customer.schema';
 
 @Injectable()
@@ -15,5 +16,47 @@ export class CustomerRepository {
       _id: new Types.ObjectId(),
       ...customer,
     });
+  }
+
+  async findByEmail(email: string) {
+    return await this.model.findOne({ email }).lean<Customer>(true);
+  }
+
+  async findOne(id: string) {
+    return await this.model.findOne({ _id: id }).lean<Customer>(true);
+  }
+  async findAll(
+    page: number,
+    limit: number,
+    sort: 'asc' | 'desc',
+    keyword: any,
+  ) {
+    return await this.model
+      .find(
+        keyword
+          ? {
+              $or: [
+                { name: new RegExp(keyword, 'i') },
+                { email: new RegExp(keyword, 'i') },
+              ],
+            }
+          : {},
+      )
+      .skip((page - 1) * limit)
+      .sort({ name: sort })
+      .limit(limit)
+      .lean<Customer[]>(true);
+  }
+
+  async updateOne(id: string, customerUpdate: UpdateCustomerDto) {
+    return await this.model
+      .findOneAndUpdate({ _id: id }, customerUpdate, { new: true })
+      .lean<Customer>(true);
+  }
+
+  async updatePassword(id: string, password: string) {
+    return await this.model
+      .findOneAndUpdate({ _id: id }, { password }, { new: true })
+      .lean<Customer>(true);
   }
 }

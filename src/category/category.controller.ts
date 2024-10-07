@@ -9,7 +9,10 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { Roles } from 'src/auth/decorator/role.decorator';
+import { Role } from 'src/auth/decorator/role.enum';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { RoleAuthGuard } from 'src/auth/guards/role-jwt.guard';
 import { CategoryService } from 'src/category/category.service';
 import { CreateCategoryDto } from 'src/category/dto/create-category.dto';
 import { UpdateCategoryDto } from 'src/category/dto/update-category.dto';
@@ -21,13 +24,15 @@ import { ParamPaginationDto } from 'src/common/param-pagination.dto';
 export class CategoryController {
   constructor(private readonly service: CategoryService) {}
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleAuthGuard)
+  @Roles(Role.ADMIN, Role.USER)
   @Post()
   create(@Body() category: CreateCategoryDto) {
     return this.service.createCategory(category);
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleAuthGuard)
+  @Roles(Role.ADMIN, Role.USER)
   @Get()
   async getAll(@Query() params: ParamPaginationDto) {
     const categories = await this.service.findAll(params);
@@ -39,24 +44,29 @@ export class CategoryController {
     return buildPagination<Category>(categories, params, rootCategories);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleAuthGuard)
+  @Roles(Role.ADMIN, Role.USER)
   @Get(':id')
   getOne(@Param('id') id: string) {
     return this.service.findById(id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleAuthGuard)
+  @Roles(Role.ADMIN, Role.USER)
   @Delete(':id')
   deleteOne(@Param('id') id: string) {
     return this.service.deleteById(id);
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleAuthGuard)
+  @Roles(Role.ADMIN, Role.USER)
   @Put(':id')
   updateOne(@Param('id') id: string, @Body() category: UpdateCategoryDto) {
     return this.service.updateById(id, category);
   }
 
+  @UseGuards(JwtAuthGuard, RoleAuthGuard)
+  @Roles(Role.ADMIN, Role.USER)
   @Put(':id/status')
   updateStatus(@Param('id') id: string, @Query('status') status: boolean) {
     return this.service.updateStatusById(id, status);

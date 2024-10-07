@@ -8,15 +8,17 @@ import { UserRepository } from 'src/user/user.repository';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { TokenPayloadDto } from 'src/auth/dto/token-payload.dto';
+import { CustomerRepository } from 'src/customer/customer.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly userRepository: UserRepository,
+    private readonly customerRepository: CustomerRepository,
   ) {}
 
-  async generateToken(login: LoginDto) {
+  async validateUser(login: LoginDto) {
     const { email, password } = login;
     const user = await this.userRepository.findByEmail(email);
 
@@ -40,6 +42,30 @@ export class AuthService {
       role: user.role,
     };
 
+    return this.jwtService.signAsync(body);
+  }
+
+  async validateCustomer(login: LoginDto) {
+    const { email, password } = login;
+    const customer = await this.customerRepository.findByEmail(email);
+    if (!customer) {
+      throw new UnauthorizedException('Không tìm thấy customer');
+    }
+
+    const isValid = bcrypt.compareSync(password, customer.password);
+    if (!isValid) {
+      throw new UnauthorizedException('Sai mật khẩu!');
+    }
+
+    if (customer.status === false) {
+      throw new UnauthorizedException('Tài khoản đã bị khoá');
+    }
+
+    const body: TokenPayloadDto = {
+      _id: customer._id.toHexString(),
+      email: customer.email,
+      name: customer.name,
+    };
     return this.jwtService.signAsync(body);
   }
 }

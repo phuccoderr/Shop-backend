@@ -13,5 +13,6 @@ import { DatabaseModule } from 'src/database/database.module';
   ],
   controllers: [CustomerController],
   providers: [CustomerService, CustomerRepository],
+  exports: [CustomerRepository],
 })
 export class CustomerModule {}
