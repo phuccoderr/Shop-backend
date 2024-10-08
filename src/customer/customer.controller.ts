@@ -55,7 +55,6 @@ export class CustomerController {
   @UseGuards(JwtAuthGuard)
   @Put('me')
   update(@Request() req, @Body() customer: UpdateCustomerDto) {
-    console.log(req);
     const { _id } = req.user;
     return this.customerService.updateById(_id, customer);
   }

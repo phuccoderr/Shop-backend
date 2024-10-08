@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import { Roles } from 'src/auth/decorator/role.decorator';
@@ -23,6 +24,13 @@ import { buildPagination } from 'src/common/common';
 @Controller('users')
 export class UserController {
   constructor(private readonly service: UserService) {}
+
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  getMe(@Request() req) {
+    const { _id } = req.user;
+    return this.service.getOne(_id);
+  }
 
   // Tạo user
   @UseGuards(JwtAuthGuard, RoleAuthGuard)

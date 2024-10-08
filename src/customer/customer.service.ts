@@ -24,7 +24,6 @@ export class CustomerService {
   }
 
   async findById(id: string) {
-    console.log(id);
     checkValisIsObject(id, 'customer id');
     const customer = await this.repository.findOne(id);
     if (!customer) {

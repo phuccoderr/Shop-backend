@@ -44,11 +44,21 @@ export class UserService {
   }
 
   async getOne(id: string) {
-    try {
-      return await this.repository.findOne(id, '-password');
-    } catch (error) {
-      throw new NotFoundException('Không tìm thấy user');
+    const user = await this.repository.findOne(id, '-password');
+
+    if (!user) {
+      throw new NotFoundException('Khong tim thay user');
     }
+
+    return user;
+  }
+
+  async getMeById(id: string) {
+    const user = await this.repository.findOne(id, '-password');
+    if (!user) {
+      throw new UnprocessableEntityException('Khong tim thay user');
+    }
+    return user;
   }
 
   async updateUser(id: string, updateUser: UpdateUserDto) {
