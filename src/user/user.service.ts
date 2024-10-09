@@ -1,6 +1,7 @@
 import {
   Injectable,
   NotFoundException,
+  OnModuleInit,
   Param,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -10,9 +11,10 @@ import { UserRepository } from 'src/user/user.repository';
 import * as bcrypt from 'bcrypt';
 import { ParamPaginationDto } from 'src/common/param-pagination.dto';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
+import { Role } from 'src/auth/decorator/role.enum';
 
 @Injectable()
-export class UserService {
+export class UserService implements OnModuleInit {
   constructor(private readonly repository: UserRepository) {}
 
   async create(user: CreateUserDto) {
@@ -83,5 +85,22 @@ export class UserService {
       throw new NotFoundException('Không tìm thấy user');
     }
     return user;
+  }
+
+  async onModuleInit(): Promise<void> {
+    const createUserAdmin: CreateUserDto = {
+      email: 'admincreate@gmail.com',
+      name: 'phuc',
+      password: '123456Phuc!',
+      status: true,
+      role: [Role.ADMIN],
+    };
+    const initInDB = await this.repository.findByEmail(createUserAdmin.email);
+    if (!initInDB) {
+      await this.repository.create({
+        ...createUserAdmin,
+        password: await bcrypt.hash(createUserAdmin.password, 10),
+      });
+    }
   }
 }
